@@ -1,0 +1,15 @@
+{
+  "contributors": [
+  ],
+  "dependencies": {
+    "coffee-script": "~1.9.3",
+    "express": "~4.12.4",
+    "express-session": "~1.11.2",
+  },
+  "installable": false,
+  "license": "MIT",
+  "main": "main/src/module.coffee",
+  "name": "sg-healthcheck-api",
+  "optionalDependencies": {},
+  "version": "0.0.1"
+}
