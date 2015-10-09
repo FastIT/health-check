@@ -1,4 +1,5 @@
 express       = require 'express'
+Promise       = require 'bluebird'
 
 module.exports = (params = {}) ->
   config =
@@ -25,6 +26,14 @@ module.exports = (params = {}) ->
 
   setInterval chrono,1000
 
+  collectionNamesAsync = (connectionDb) ->
+    new Promise((fulfill,reject)->
+      connectionDb.collectionNames (err,items) ->
+        if err
+          return reject err
+        return fulfill items
+      )
+
   app.get "/healthcheck", (req, res, next) ->
     answer = {}
     answer['Uptime'] = days + 'd ' + hours + 'h ' + minutes + 'm ' + secondes + 's'
@@ -32,12 +41,21 @@ module.exports = (params = {}) ->
     #Check mongoDb connection
     if config.mongoDbs
       mongoDbs = config.mongoDbs()
-      i = 0
-      mongo = {}
+      promises = []
       for mongoDb in mongoDbs
+        promises.push collectionNamesAsync(mongoDb)
+
+    Promise.settle(promises).then (results) ->
+      mongo = {}
+      i = 0
+      for result in results
         i++
-        mongoDb.collectionNames((err,items)->
-          mongoitems)
-          
-    res.send(answer)
+        if result.isFulfilled()
+          mongo['database ' + i] = result.value()
+        else
+          # mongo['datasource ' + i] = String result.reason()
+          mongo['database ' + i] = 'Error'
+      answer['Mongo connections'] = mongo
+      res.send(answer)
+
   return app
