@@ -7,24 +7,9 @@ module.exports = (params = {}) ->
 
   app = express()
 
-  days     = 0
-  hours    = 0
-  minutes  = 0
   secondes = 0
 
-  chrono = ->
-    secondes += 1
-    if secondes > 59
-      minutes += 1
-      secondes = 0
-      if minutes > 59
-        hours += 1
-        minutes = 0
-        if hours > 23
-          days += 1
-          hours = 0
-
-  setInterval chrono,1000
+  setInterval (()-> secondes++),1000
 
   collectionNamesAsync = (connectionDb) ->
     new Promise((fulfill,reject)->
@@ -36,7 +21,7 @@ module.exports = (params = {}) ->
 
   app.get "/healthcheck", (req, res, next) ->
     answer = {}
-    answer['Uptime'] = days + 'd ' + hours + 'h ' + minutes + 'm ' + secondes + 's'
+    answer['uptime'] = secondes
 
     #Check mongoDb connection
     if config.mongoDbs
@@ -51,11 +36,10 @@ module.exports = (params = {}) ->
       for result in results
         i++
         if result.isFulfilled()
-          mongo['database ' + i] = result.value()
+          mongo['database_' + i] = true
         else
-          # mongo['datasource ' + i] = String result.reason()
-          mongo['database ' + i] = 'Error'
-      answer['Mongo connections'] = mongo
+          mongo['database_' + i] = false
+      answer['mongo'] = mongo
       res.send(answer)
 
   return app
