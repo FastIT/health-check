@@ -1,0 +1,30 @@
+language: node_js
+
+node_js:
+  - '0.12'
+
+services:
+  - mongodb
+  - elasticsearch
+
+cache:
+  directories:
+    - node_modules
+    - bower_components
+
+notifications:
+  email:
+    - thibaultc@theodo.fr
+
+before_install:
+  - npm install -g npm@latest
+
+before_script:
+  - sleep 15
+  - mongo testDb --eval 'db.addUser("pacman", "pacman");'
+
+script:
+  - npm test
+
+after_failure:
+  - cat /home/travis/build/FastIT/health-check/npm-debug.log
