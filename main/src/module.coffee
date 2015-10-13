@@ -5,7 +5,7 @@ module.exports = (params = {}) ->
   config =
     mongoDbs:               if params.mongoDbs?           then params.mongoDbs                  else null
     postgresDbs:            if params.postgresDbs?        then params.postgresDbs               else null
-    elasticsearchClts:      if params.elasticsearchClts?  then params.params.elasticsearchClts  else null
+    elasticsearchClts:      if params.elasticsearchClts?  then params.elasticsearchClts  else null
 
   app = express()
   secondes = 0
