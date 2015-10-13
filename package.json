@@ -9,7 +9,7 @@
   "installable": false,
   "license": "MIT",
   "main": "main/src/module.coffee",
-  "name": "sg-healthcheck-api",
+  "name": "health-check",
   "optionalDependencies": {},
   "version": "0.0.1"
 }
