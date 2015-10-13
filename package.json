@@ -10,6 +10,15 @@
   "license": "MIT",
   "main": "main/src/module.coffee",
   "name": "health-check",
-  "optionalDependencies": {},
+  "optionalDependencies": {
+    "chai": "*",
+    "mocha": "*",
+    "should": "*",
+    "sinon-chai": "*",
+    "supertest": "*"
+  },
+  "scripts": {
+      "test": "mocha test 'test/src/**/*.coffee' --require coffee-script/register"
+  },
   "version": "0.0.1"
 }
