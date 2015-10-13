@@ -12,7 +12,6 @@ mongo.init = ( next = -> return null ) ->
   mongo.mongoClient = new MongoClient(server)
 
   mongo.mongoClient.open (err, client) ->
-    # Create or get the database
     mongo.mongoDb = mongo.mongoClient.db config.db.name
     mongo.mongoDb.authenticate config.db.username, config.db.password, (err) ->
       next()
