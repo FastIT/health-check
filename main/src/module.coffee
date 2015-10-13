@@ -46,7 +46,7 @@ module.exports = (params = {}) ->
 
   app.get "/healthcheck", (req, res, next) ->
     answer = {}
-    answer['uptime'] = uptime()[0]
+    answer['uptime'] = uptime()
     promises = []
 
     #Check postgresDbs connections
