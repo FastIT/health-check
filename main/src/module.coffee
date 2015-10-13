@@ -9,8 +9,7 @@ module.exports = (params = {}) ->
     elasticsearchClts:      if params.elasticsearchClts?  then params.elasticsearchClts   else null
 
   app = express()
-  secondes = 0
-  setInterval (()-> secondes++),1000
+  uptime = process.hrtime
 
   collectionNamesAsync = (mongoConnectionDb) ->
     new Promise((fulfill,reject)->
@@ -48,7 +47,7 @@ module.exports = (params = {}) ->
 
   app.get config.urn, (req, res, next) ->
     answer = {}
-    answer['uptime'] = secondes
+    answer['uptime'] = uptime()
     promises = []
 
     #Check postgresDbs connections
