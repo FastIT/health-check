@@ -45,20 +45,20 @@ describe 'module', ->
         expect(res.statusCode).to.eql 200
         done()
 
-    it 'should detecte connection to mongodb', (done) ->
+    it 'should detect connection to mongodb', (done) ->
       agent.get '/api/health-check'
       .end (err, res) ->
         expect(res.body.mongo).to.eql {database_1: true}
         done()
 
-    it 'should not dectecte any connection to mongodb', (done) ->
+    it 'should not dectect any connection to mongodb', (done) ->
       mongo.mongoClient.close()
       agent.get '/api/health-check'
       .end (err, res) ->
         expect(res.body.mongo).to.eql {database_1: false}
         done()
 
-    it 'should detecte connection to elasticsearch', (done) ->
+    it 'should detect connection to elasticsearch', (done) ->
       agent.get '/api/health-check'
       .end (err, res) ->
         expect(res.body.elasticsearch).to.eql {database_1: true}
