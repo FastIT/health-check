@@ -3,8 +3,9 @@ Promise       = require 'bluebird'
 
 module.exports = (params = {}) ->
   config =
-    mongoDbs:         if params.mongoDbs?    then params.mongoDbs    else null
-    postgresDbs:      if params.postgresDbs? then params.postgresDbs else null
+    mongoDbs:               if params.mongoDbs?           then params.mongoDbs                  else null
+    postgresDbs:            if params.postgresDbs?        then params.postgresDbs               else null
+    elasticsearchClts:      if params.elasticsearchClts?  then params.params.elasticsearchClts  else null
 
   app = express()
   secondes = 0
@@ -32,12 +33,24 @@ module.exports = (params = {}) ->
               return fulfill result
       )
 
+  pingAsync = (elasticsearchClt) ->
+    new Promise((fulfill,reject) ->
+      elasticsearchClt.ping {
+        requestTimeout: 3000
+        hello: 'elasticsearch!'
+        }, (err) ->
+          if err
+            return reject err
+          else
+            return fulfill true
+    )
+
   app.get "/healthcheck", (req, res, next) ->
     answer = {}
     answer['uptime'] = secondes
     promises = []
 
-    #Check postgresDbs connection
+    #Check postgresDbs connections
     if config.postgresDbs
       postgresDbs = config.postgresDbs()
       for postgresDb in postgresDbs
@@ -45,16 +58,25 @@ module.exports = (params = {}) ->
 
     promises.push 'mongo'
 
-    #Check mongoDb connection
+    #Check mongoDb connections
     if config.mongoDbs
       mongoDbs = config.mongoDbs()
       for mongoDb in mongoDbs
         promises.push collectionNamesAsync(mongoDb)
 
-    if promises.length > 1
+    promises.push 'elasticsearch'
+
+    #Check elasticsearch connections
+    if config.elasticsearchClts
+      elasticsearchClts = config.elasticsearchClts
+      for elasticsearchClt in elasticsearchClts
+        promises.push pingAsync(elasticsearchClt)
+
+    if promises.length > 2
       Promise.settle(promises).then (results) ->
         mongo = {}
         postgres = {}
+        elastic = {}
         databases = postgres
         i = 0
         j = 1
@@ -63,16 +85,20 @@ module.exports = (params = {}) ->
           if promises[i] == 'mongo'
             databases = mongo
             j = 1
+          else if promises[i] == 'elasticsearch'
+            databases = elastic
+            j = 1
           else
             if result.isFulfilled()
               databases['database_' + j] = true
             else
               databases['database_' + j] = false
+            j++
           i++
-          j++
 
-        answer['postgres'] = postgres
-        answer['mongo'] = mongo
+        answer['postgres']        = postgres
+        answer['mongo']           = mongo
+        answer['elasticsearch']   = elastic
         res.send(answer)
     else
       res.send(answer)
