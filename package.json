@@ -16,7 +16,8 @@
     "should": "*",
     "sinon-chai": "*",
     "supertest": "*",
-    "elasticsearch": "*"
+    "elasticsearch": "*",
+    "pg": "*"
   },
   "scripts": {
       "test": "mocha test 'test/src/**/*.coffee' --require coffee-script/register"

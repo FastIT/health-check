@@ -7,6 +7,9 @@ services:
   - mongodb
   - elasticsearch
 
+addons:
+  postgresql: "9.3"
+
 cache:
   directories:
     - node_modules
@@ -18,6 +21,9 @@ notifications:
 
 before_install:
   - npm install -g npm@latest
+  - createdb base_test
+  - createuser pacman
+  - psql -d base_test -c "ALTER DATABASE base_test OWNER TO pacman;"
 
 before_script:
   - sleep 15

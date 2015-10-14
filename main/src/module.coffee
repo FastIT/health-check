@@ -17,21 +17,16 @@ module.exports = (params = {}) ->
         if err
           return reject err
         return fulfill items
-      )
+      ).timeout(1000)
 
   timeQueryAsync = (postgresClient) ->
     new Promise((fulfill,reject)->
-      postgresClient.connect (err,items)->
+      postgresClient.query 'SELECT NOW() AS "theTime"', (err, result) ->
         if err
           return reject err
         else
-          postgresClient.query 'SELECT NOW() AS "theTime"', (err, result) ->
-            if err
-              return reject err
-            else
-              postgresClient.end()
-              return fulfill result
-      )
+          return fulfill result
+      ).timeout(1000)
 
   pingAsync = (elasticsearchClt) ->
     new Promise((fulfill,reject) ->
@@ -68,7 +63,7 @@ module.exports = (params = {}) ->
 
     #Check elasticsearch connections
     if config.elasticsearchClts
-      elasticsearchClts = config.elasticsearchClts
+      elasticsearchClts = config.elasticsearchClts()
       for elasticsearchClt in elasticsearchClts
         promises.push pingAsync(elasticsearchClt)
 
