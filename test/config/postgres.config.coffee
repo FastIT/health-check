@@ -1,9 +1,9 @@
 config =
   db:
-    name: 'travis_ci_test'
+    name: 'base_test'
     address: 'localhost'
     port: null
-    username: 'travis_ci_test'
+    username: 'pacman'
     password: ''
 
 module.exports = config

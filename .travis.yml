@@ -21,11 +21,13 @@ notifications:
 
 before_install:
   - npm install -g npm@latest
+  - createdb base_test
+  - createuser pacman
+  - psql -d base_test -c "ALTER DATABASE base_test OWNER TO pacman;"
 
 before_script:
   - sleep 15
   - mongo testDb --eval 'db.addUser("pacman", "pacman");'
-  - psql -c 'create database travis_ci_test;' -U postgres
 
 script:
   - npm test
