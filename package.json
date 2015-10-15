@@ -6,7 +6,6 @@
     "express-session": "~1.11.2",
     "loopback": "^2.22.2",
     "loopback-boot": "^2.14.0",
-    "loopback-component-storage": "^1.5.1",
     "mongodb": "^2.0.45"
   },
   "installable": false,

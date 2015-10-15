@@ -8,29 +8,31 @@ mongo         = require('../mongo')
 elasticsearch = require('../elasticsearch')
 postgres      = require('../postgres')
 
-app = module.exports = loopback()
-
-app.use module
-  mongoDbs: ->
-    [app.datasources.mongodb.connector]
-
-app.start = ->
-# start the web server
-  app.listen ->
-    app.emit 'started'
-    console.log 'Web server listening at: %s', app.get('url')
-    return
-
-boot app, __dirname, (err) ->
-  if err
-    throw err
-  # start the server if `$ node server.js`
-  app.start()
-
 describe 'loopback module', ->
   agent = null
 
-  before ->
+  before (done) ->
+    app = loopback()
+    app.set 'port', 3388
+    app.set 'url', "0.0.0.0"
+    app.set 'legacyExplorer', false
+    app.set 'baseUri', '/'
+    ds = loopback.createDataSource
+      database: "testDb",
+      connector: "loopback-connector-mongodb",
+      hostname: "localhost",
+      port: 27017,
+      username: "pacman",
+      password: "pacmanpass"
+    model = ds.createModel 'MyModel', {},
+      base: 'Model'
+      plural: 'my-model'
+    app.model model
+
+    app.use module
+      mongoDbs: ->
+        [ds.connector.db]
+    setTimeout done, 200
     agent = request app
 
   describe 'GET /api/health-check', ->

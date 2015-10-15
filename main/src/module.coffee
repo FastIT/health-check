@@ -20,10 +20,7 @@ module.exports = (params = {}) ->
         else
           return fulfill result
 
-      if mongoConnectionDb.dataSource
-        mongoConnectionDb.ping callback
-      else
-        mongoConnectionDb.collection('dummy').findOne { _id: 1 }, callback
+      mongoConnectionDb.collection('dummy').findOne { _id: 1 }, callback
       ).timeout(1000)
 
   timeQueryAsync = (postgresClient) ->
