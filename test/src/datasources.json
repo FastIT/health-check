@@ -1,0 +1,10 @@
+{
+  "mongodb": {
+    "database": "testDb",
+    "connector": "loopback-connector-mongodb",
+    "hostname": "localhost",
+    "port": 27017,
+    "username": "pacman",
+    "password": "pacmanpass"
+  }
+}
