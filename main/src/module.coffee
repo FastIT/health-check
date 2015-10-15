@@ -11,33 +11,44 @@ module.exports = (params = {}) ->
   app = express()
   uptime = process.hrtime
 
-  collectionNamesAsync = (mongoConnectionDb) ->
-    new Promise((fulfill,reject)->
-      mongoConnectionDb.collectionNames (err,items) ->
-        if err
-          return reject err
-        return fulfill items
-      ).timeout(1000)
 
-  timeQueryAsync = (postgresClient) ->
+  pingMongoAsync = (mongoConnectionDb) ->
     new Promise((fulfill,reject)->
-      postgresClient.query 'SELECT NOW() AS "theTime"', (err, result) ->
+      callback = (err,result) ->
         if err
           return reject err
         else
           return fulfill result
+
+      if mongoConnectionDb.dataSource
+        mongoConnectionDb.ping callback
+      else
+        mongoConnectionDb.collection('dummy').findOne { _id: 1 }, callback
       ).timeout(1000)
 
-  pingAsync = (elasticsearchClt) ->
+  timeQueryAsync = (postgresClient) ->
+    new Promise((fulfill,reject)->
+      callback = (err,result) ->
+        if err
+          return reject err
+        else
+          return fulfill result
+
+      postgresClient.query 'SELECT NOW() AS "theTime"', callback
+      ).timeout(1000)
+
+  pingElasticsearchAsync = (elasticsearchClt) ->
     new Promise((fulfill,reject) ->
+      callback = (err,result) ->
+        if err
+          return reject err
+        else
+          return fulfill result
+
       elasticsearchClt.ping {
         requestTimeout: 3000
         hello: 'elasticsearch!'
-        }, (err) ->
-          if err
-            return reject err
-          else
-            return fulfill true
+        }, callback
     )
 
   app.get config.urn, (req, res, next) ->
@@ -57,7 +68,7 @@ module.exports = (params = {}) ->
     if config.mongoDbs
       mongoDbs = config.mongoDbs()
       for mongoDb in mongoDbs
-        promises.push collectionNamesAsync(mongoDb)
+        promises.push pingMongoAsync(mongoDb)
 
     promises.push 'elasticsearch'
 
@@ -65,7 +76,7 @@ module.exports = (params = {}) ->
     if config.elasticsearchClts
       elasticsearchClts = config.elasticsearchClts()
       for elasticsearchClt in elasticsearchClts
-        promises.push pingAsync(elasticsearchClt)
+        promises.push pingElasticsearchAsync(elasticsearchClt)
 
     if promises.length > 2
       Promise.settle(promises).then (results) ->
