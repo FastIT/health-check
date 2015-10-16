@@ -29,7 +29,7 @@ before_install:
 
 before_script:
   - sleep 15
-  - mongo testDb --eval 'db.addUser("pacman", "pacman");'
+  - mongo base_test --eval 'db.addUser("pacman", "pacmanpass");'
 
 script:
   - npm test

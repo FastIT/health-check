@@ -3,7 +3,7 @@
     "bluebird": "^2.10.2",
     "coffee-script": "~1.9.3",
     "express": "~4.12.4",
-    "express-session": "~1.11.2"
+    "mongodb": "^2.0.45"
   },
   "installable": false,
   "license": "MIT",
@@ -30,6 +30,10 @@
     "mongodb": "^1.4.39",
     "pg": "^4.4.3",
     "should": "^7.1.0",
+    "express-session": "~1.11.2",
+    "loopback": "^2.22.2",
+    "loopback-boot": "^2.14.0",
+    "loopback-connector-mongodb": "^1.13.0",
     "sinon-chai": "^2.8.0",
     "supertest": "^1.1.0"
   }
