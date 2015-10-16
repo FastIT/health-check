@@ -38,4 +38,4 @@ after_failure:
   - cat /home/travis/build/FastIT/health-check/npm-debug.log
 
 after_success:
-  - cat coverage/lcov.info | COVERALLS_GIT_BRANCH=$TRAVIS_BRANCH COVERALLS_GIT_COMMIT=$TRAVIS_COMMIT ./node_modules/coveralls/bin/coveralls.js
+  - cat coverage/lcov.info | ./node_modules/codecov.io/codecov.io.js
