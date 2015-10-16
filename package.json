@@ -34,6 +34,7 @@
     "loopback": "^2.22.2",
     "loopback-boot": "^2.14.0",
     "loopback-connector-mongodb": "^1.13.0",
+    "loopback-connector-postgresql": "^2.3.0",
     "sinon-chai": "^2.8.0",
     "supertest": "^1.1.0"
   }

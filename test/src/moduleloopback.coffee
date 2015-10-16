@@ -17,23 +17,39 @@ describe 'loopback module', ->
     app.set 'url', "0.0.0.0"
     app.set 'legacyExplorer', false
     app.set 'baseUri', '/'
-    ds = loopback.createDataSource
-      database: "base_test",
-      connector: "loopback-connector-mongodb",
-      hostname: "localhost",
-      port: 27017,
-      username: "pacman",
+    mongo = loopback.createDataSource
+      database: "base_test"
+      connector: "loopback-connector-mongodb"
+      hostname: "localhost"
+      port: 27017
+      username: "pacman"
       password: "pacmanpass"
-    model = ds.createModel 'MyModel', {},
+    mongoModel = mongo.createModel 'MyModel', {},
       base: 'Model'
       plural: 'my-model'
-    app.model model
 
-    app.use module
-      mongoDbs: ->
-        [ds.connector.db]
-    setTimeout done, 200
-    agent = request app
+    postgres = loopback.createDataSource
+      database: "base_test"
+      connector: "postgresql"
+      hostname: "localhost"
+      username: "pacman"
+    postgresModel = postgres.createModel 'MyModel', {},
+      name:
+        type: 'String'
+        required: false
+
+    app.model mongoModel
+    app.model postgresModel
+
+    setTimeout ->
+      app.use module
+        mongoDbs: ->
+          [mongo.connector.db]
+        postgresDbs: ->
+          [postgres.connector.client]
+      agent = request app
+      done()
+    , 1000
 
   describe 'GET /api/health-check', ->
     it 'should respond 200 code', (done) ->
@@ -46,4 +62,10 @@ describe 'loopback module', ->
       agent.get '/api/health-check'
       .end (err, res) ->
         expect(res.body.mongo).to.eql {database_1: true}
+        done()
+
+    it 'should detect a connection to postgres', (done) ->
+      agent.get '/api/health-check'
+      .end (err, res) ->
+        expect(res.body.postgres).to.eql {database_1: true}
         done()
