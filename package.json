@@ -21,7 +21,7 @@
   },
   "scripts": {
     "watch": "gulp watch",
-    "test": "mocha test 'test/src/**/*.coffee'",
+    "test": "COFFEECOV_INIT_ALL=false mocha test 'test/src/**/*.coffee'",
     "posttest": "istanbul report"
   },
   "version": "0.0.1",
