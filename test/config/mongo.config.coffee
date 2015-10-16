@@ -1,10 +1,10 @@
 config =
   db:
-    name: 'testDb'
-    address: 'localhost'
+    name: 'base_test'
+    host: 'localhost'
     port: 27017
     username: 'pacman'
-    password: 'pacman'
+    password: 'pacmanpass'
     collections:
       collection1: 'collection1'
       collection2: 'collection2'

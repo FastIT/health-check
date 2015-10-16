@@ -1,6 +1,6 @@
-expect  = require('chai').expect
-express = require 'express'
-request = require 'supertest'
+expect     = require('chai').expect
+express    = require 'express'
+request    = require 'supertest'
 
 module        = require('../../main/src/module')
 mongo         = require('../mongo')
@@ -8,12 +8,12 @@ elasticsearch = require('../elasticsearch')
 postgres      = require('../postgres')
 
 app = null
-server = null
+serverExpress = null
 
 port = 9876
 url  = 'http://localhost:' + port
 
-startServer = (callback = ( -> return )) ->
+startServerExpress = (callback = ( -> return )) ->
   app = express()
 
   app.use module
@@ -26,21 +26,21 @@ startServer = (callback = ( -> return )) ->
 
   mongo.init ->
     postgres.postgresClient.connect()
-    server = app.listen port, callback
+    serverExpress = app.listen port, callback
 
-stopServer = (callback = ( -> return )) ->
-  server.close callback
-  mongo.mongoClient.close()
+stopServerExpress = (callback = ( -> return )) ->
+  serverExpress.close callback
+  mongo.mongoDb.close()
 
-describe 'module', ->
+describe 'Express module', ->
   agent = null
 
   before (done) ->
-    startServer done
+    startServerExpress done
     agent = request.agent app
 
   after (done) ->
-    stopServer done
+    stopServerExpress done
 
   describe 'GET /api/health-check', ->
     it 'should respond 200 code', (done) ->
@@ -68,7 +68,7 @@ describe 'module', ->
         done()
 
     it 'should not dectect any connection to mongodb', (done) ->
-      mongo.mongoClient.close()
+      mongo.mongoDb.close()
       agent.get '/api/health-check'
       .end (err, res) ->
         expect(res.body.mongo).to.eql {database_1: false}
