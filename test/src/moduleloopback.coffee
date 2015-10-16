@@ -18,7 +18,7 @@ describe 'loopback module', ->
     app.set 'legacyExplorer', false
     app.set 'baseUri', '/'
     ds = loopback.createDataSource
-      database: "testDb",
+      database: "base_test",
       connector: "loopback-connector-mongodb",
       hostname: "localhost",
       port: 27017,

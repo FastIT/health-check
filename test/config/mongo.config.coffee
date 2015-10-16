@@ -1,6 +1,6 @@
 config =
   db:
-    name: 'testDb'
+    name: 'base_test'
     host: 'localhost'
     port: 27017
     username: 'pacman'
