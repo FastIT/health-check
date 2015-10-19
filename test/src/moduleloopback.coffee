@@ -38,6 +38,13 @@ describe 'loopback module', ->
         type: 'String'
         required: false
 
+    elasticsearch = loopback.createDataSource
+      host: 'localhost'
+      port: 9200
+      name: 'elastic'
+      connector: 'es'
+
+
     app.model mongoModel
     app.model postgresModel
 
@@ -47,6 +54,8 @@ describe 'loopback module', ->
           [mongo.connector.db]
         postgresDbs: ->
           [postgres.connector.client]
+        elasticsearchClts: ->
+          [elasticsearch.connector.db]
       agent = request app
       done()
     , 1000
@@ -68,4 +77,10 @@ describe 'loopback module', ->
       agent.get '/api/health-check'
       .end (err, res) ->
         expect(res.body.postgres).to.eql {database_1: true}
+        done()
+
+    it 'should detect a connection to elasticsearch', (done) ->
+      agent.get '/api/health-check'
+      .end (err, res) ->
+        expect(res.body.elasticsearch).to.eql {database_1: true}
         done()
