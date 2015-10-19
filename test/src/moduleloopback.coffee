@@ -41,8 +41,8 @@ describe 'loopback module', ->
     elasticsearch = loopback.createDataSource
       host: 'localhost'
       port: 9200
-      name: 'es'
-      connector: 'elastic-search'
+      name: 'elastic'
+      connector: 'es'
 
 
     app.model mongoModel
@@ -55,7 +55,7 @@ describe 'loopback module', ->
         postgresDbs: ->
           [postgres.connector.client]
         elasticsearchClts: ->
-          [elasticsearch.connector.elasticServer]
+          [elasticsearch.connector.db]
       agent = request app
       done()
     , 1000

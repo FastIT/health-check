@@ -33,7 +33,7 @@
     "express-session": "~1.11.2",
     "loopback": "^2.22.2",
     "loopback-boot": "^2.14.0",
-    "loopback-connector-elastic-search": "^0.0.2-a",
+    "loopback-connector-es": "^1.0.2",
     "loopback-connector-mongodb": "^1.13.0",
     "loopback-connector-postgresql": "^2.3.0",
     "sinon-chai": "^2.8.0",
