@@ -9,7 +9,9 @@ module.exports = (params = {}) ->
     elasticsearchClts:      if params.elasticsearchClts?  then params.elasticsearchClts   else null
 
   app = express()
-  uptime = process.hrtime
+
+  uptime = ->
+    process.hrtime()[0]
 
 
   pingMongoAsync = (mongoConnectionDb) ->
