@@ -49,6 +49,17 @@ describe 'Express module', ->
         expect(res.statusCode).to.eql 200
         done()
 
+    it 'should return the uptime', (done) ->
+      agent.get '/api/health-check'
+      .end (err, res) ->
+        uptime = res.body.uptime
+        setTimeout ->
+          agent.get '/api/health-check'
+          .end (err2, res2) ->
+            expect(res2.body.uptime).to.not.eql uptime
+            done()
+        , 1000
+
     it 'should detect connection to mongodb', (done) ->
       agent.get '/api/health-check'
       .end (err, res) ->
