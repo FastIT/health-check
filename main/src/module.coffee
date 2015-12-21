@@ -1,5 +1,6 @@
-express       = require 'express'
-Promise       = require 'bluebird'
+express = require 'express'
+Promise = require 'bluebird'
+prettyHrtime = require 'pretty-hrtime'
 
 module.exports = (params = {}) ->
   config =
@@ -9,10 +10,10 @@ module.exports = (params = {}) ->
     elasticsearchClts:      if params.elasticsearchClts?  then params.elasticsearchClts   else null
 
   app = express()
+  start = process.hrtime()
 
   uptime = ->
-    process.hrtime()[0]
-
+    prettyHrtime process.hrtime start
 
   pingMongoAsync = (mongoConnectionDb) ->
     new Promise((fulfill,reject)->
