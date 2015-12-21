@@ -17,10 +17,6 @@ cache:
     - node_modules
     - bower_components
 
-notifications:
-  email:
-    - thibaultc@theodo.fr
-
 before_install:
   - npm install -g npm@latest
   - createdb base_test
