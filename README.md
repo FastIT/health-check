@@ -5,6 +5,24 @@
 
 An health check module for express and loopback
 
-#Mongo health-check
+# Usage
 
-#Elasticsearch health-check
+In your app, add the following code:
+
+```coffeescript
+config = {}
+healthcheck = require('healthcheck-fastit') config
+app.use healthcheck
+```
+
+```
+curl http://localhost/api/health-check
+```
+
+# API response
+
+```javascript
+{
+  "uptime": 42 // in seconds
+}
+```
