@@ -8,14 +8,13 @@
   "installable": false,
   "license": "MIT",
   "main": "main/src/module.coffee",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "name": "healthcheck-fastit",
   "scripts": {
     "watch": "gulp watch",
     "test": "COFFEECOV_INIT_ALL=false mocha test 'test/src/**/*.coffee'",
     "posttest": "istanbul report"
   },
-  "version": "0.0.3",
   "devDependencies": {
     "chai": "^3.3.0",
     "codecov.io": "^0.1.6",
