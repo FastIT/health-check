@@ -8,7 +8,8 @@
   "installable": false,
   "license": "MIT",
   "main": "main/src/module.coffee",
-  "name": "health-check",
+  "version": "0.0.1",
+  "name": "healthcheck-fastIT",
   "scripts": {
     "watch": "gulp watch",
     "test": "COFFEECOV_INIT_ALL=false mocha test 'test/src/**/*.coffee'",
