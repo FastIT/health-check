@@ -98,3 +98,29 @@ mongo.mongoClient.connect url, (err, db) ->
   app.server = app.listen 3000
 
 ```
+
+## Elasticsearch
+
+```coffeescript
+
+elasticsearch = require 'elasticsearch'
+express = require 'express'
+
+config =
+  host: 'localhost'
+  port: 9200
+
+app = express()
+
+config =
+  elasticsearch =
+    client: new elasticsearch.Client
+      host: config.host + ':' + config.port
+      log: 'debug'
+
+healthcheck = require('../main/src/module') config
+app.use healthcheck
+
+app.server = app.listen 3000
+
+```
