@@ -6,7 +6,7 @@ _ = require 'lodash'
 module.exports = (params = {}) ->
   defaultConfig =
     urn: '/api/health-check'
-    getMongoConnections: null
+    mongo: null
   config = _.defaults params, defaultConfig
 
   app = express()
@@ -61,22 +61,23 @@ module.exports = (params = {}) ->
     checkMongo = (driver, dbConfig) ->
 
       new Promise (fulfill,reject)->
-        Db = driver.Db
-        MongoClient = driver.MongoClient
-        Server = driver.Server
-
-        db = new Db dbConfig.name, new Server(dbConfig.address, dbConfig.port)
+        # Db = driver.Db
+        # Server = driver.Server
+        #
+        # db = new Db dbConfig.name, new Server(dbConfig.host, dbConfig.port)
         # Establish connection to db
-        db.open (err, db) ->
+        console.log config.mongo.connection
+        config.mongo.connection.stats (err, db) ->
+          console.log err
+          console.log info
+          # return reject err if err?
+          # # Retrive the server Info
+          # db.stats (err, info) ->
+          #   console.log err
+          #   console.log info
+          #   # db.close()
           return reject err if err?
-          # Use the admin database for the operation
-          adminDb = db.admin()
-
-          # Retrive the server Info
-          adminDb.serverStatus (err, info) ->
-            db.close()
-            return reject err if err?
-            return fulfill info
+          return fulfill db
 
     # Check mongo
     if config.mongo?.driver? and config.mongo?.config?
@@ -94,8 +95,6 @@ module.exports = (params = {}) ->
     mongoPromise.then (info) ->
       body['mongo'] =
         status: if info.ok is 1 then 'ok' else 'ko'
-        uptime: info.uptime
-        connections: info.connections
     .catch (err) ->
       body['mongo'] =
         status: 'ko'
