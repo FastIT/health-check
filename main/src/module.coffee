@@ -25,7 +25,7 @@ module.exports = (params = {}) ->
       mongoConnectionDb.collection('dummy').findOne { _id: 1 }, callback
       ).timeout(1000)
 
-  pingPostgresAsync = (postgresClient) ->
+  pingPostgresAsync = (client) ->
     new Promise((fulfill,reject)->
       callback = (err,result) ->
         if err
@@ -33,7 +33,7 @@ module.exports = (params = {}) ->
         else
           return fulfill result
 
-      postgresClient.query 'SELECT NOW() AS "theTime"', callback
+      client.query 'SELECT NOW() AS "theTime"', callback
       ).timeout(1000)
 
   pingElasticsearchAsync = (elasticsearchClt) ->
@@ -54,10 +54,10 @@ module.exports = (params = {}) ->
     body = {}
     body['uptime'] = uptime()
 
-    #Check postgres connection
+    # Check postgres
     postgresPromise = null
-    if config.postgres?.postgresClient?
-      postgresPromise = pingPostgresAsync config.postgres.postgresClient
+    if config.postgres?.client?
+      postgresPromise = pingPostgresAsync config.postgres.client
       .then ->
         status: 'ok'
       .catch (err) ->
@@ -65,24 +65,29 @@ module.exports = (params = {}) ->
 
     # Check mongo
     mongoPromise = null
-    if config.mongo?.mongoClient?
-      mongoPromise = pingMongoAsync config.mongo.mongoClient
+    if config.mongo?.client?
+      mongoPromise = pingMongoAsync config.mongo.client
       .then ->
         status: 'ok'
       .catch (err) ->
         status: 'ko'
 
+    # Check elasticsearch
+    elasticsearchPromise = null
+    if config.elasticsearch?.client?
+      elasticsearchPromise = pingElasticsearchAsync config.elasticsearch.client
+      .then ->
+        status: 'ok'
+      .catch (err) ->
+        status: 'ko'
 
-    # promises.push 'elasticsearch'
-    #
-    # #Check elasticsearch connections
-    # if config.elasticsearchClts
-    #   elasticsearchClts = config.elasticsearchClts()
-    #   for elasticsearchClt in elasticsearchClts
-    #     promises.push pingElasticsearchAsync(elasticsearchClt)
-    #
-    Promise.all([mongoPromise, postgresPromise]).then ([mongo, postgres]) ->
+    Promise.all([
+      mongoPromise
+      postgresPromise
+      elasticsearchPromise
+    ]).then ([mongo, postgres, elasticsearch]) ->
       body['mongo'] = mongo
       body['postgres'] = postgres
+      body['elasticsearch'] = elasticsearch
       res.send body
   return app

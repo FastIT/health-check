@@ -29,6 +29,9 @@ curl http://localhost/api/health-check
   },
   "mongo": {
     "status": "ok", // or ko
+  },
+  "elasticsearch": {
+    "status": "ok", // or ko
   }
 }
 ```
@@ -54,7 +57,7 @@ connectionString = "postgres://#{db.username}:#{db.password}@#{db.host}:#{db.por
 
 config =
   postgres:
-    postgresClient: new pg.Client connectionString
+    client: new pg.Client connectionString
 
 app = express()
 healthcheck = require('../main/src/module') config
@@ -88,10 +91,36 @@ mongo.mongoClient.connect url, (err, db) ->
   return if err?
   config =
     mongo:
-      mongoClient: db
+      client: db
   healthcheck = require('../main/src/module') config
   app.use healthcheck
 
   app.server = app.listen 3000
+
+```
+
+## Elasticsearch
+
+```coffeescript
+
+elasticsearch = require 'elasticsearch'
+express = require 'express'
+
+config =
+  host: 'localhost'
+  port: 9200
+
+app = express()
+
+config =
+  elasticsearch =
+    client: new elasticsearch.Client
+      host: config.host + ':' + config.port
+      log: 'debug'
+
+healthcheck = require('../main/src/module') config
+app.use healthcheck
+
+app.server = app.listen 3000
 
 ```

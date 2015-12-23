@@ -1,12 +1,12 @@
-expect     = require('chai').expect
-request    = require 'supertest'
-loopback   = require 'loopback'
-boot       = require 'loopback-boot'
+expect = require('chai').expect
+request = require 'supertest'
+loopback = require 'loopback'
+boot = require 'loopback-boot'
 
-module        = require('../../main/src/module')
-mongo         = require('../mongo')
+module = require('../../main/src/module')
+mongo = require('../mongo')
 elasticsearch = require('../elasticsearch')
-postgres      = require('../postgres')
+postgres = require('../postgres')
 
 describe 'loopback module', ->
   agent = null
@@ -51,11 +51,11 @@ describe 'loopback module', ->
     setTimeout ->
       app.use module
         mongo:
-          mongoClient: mongo.connector.db
+          client: mongo.connector.db
         postgres:
-          postgresClient: postgres.connector.client
-        elasticsearchClts: ->
-          [elasticsearch.connector.db]
+          client: postgres.connector.client
+        elasticsearch:
+          client: elasticsearch.connector.db
       agent = request app
       done()
     , 1000
@@ -79,8 +79,8 @@ describe 'loopback module', ->
         expect(res.body.postgres).to.eql {status: 'ok'}
         done()
 
-    # it 'should detect a connection to elasticsearch', (done) ->
-    #   agent.get '/api/health-check'
-    #   .end (err, res) ->
-    #     expect(res.body.elasticsearch).to.eql {database_1: true}
-    #     done()
+    it 'should detect a connection to elasticsearch', (done) ->
+      agent.get '/api/health-check'
+      .end (err, res) ->
+        expect(res.body.elasticsearch).to.eql {status: 'ok'}
+        done()
