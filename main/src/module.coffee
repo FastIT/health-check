@@ -56,10 +56,8 @@ module.exports = (params = {}) ->
 
     #Check postgres connection
     postgresPromise = null
-    console.log config.postgres
-    if _.isFunction config.postgres?.getPostgresClient
-      postgresClient = config.postgres.getPostgresClient()
-      postgresPromise = pingPostgresAsync(postgresClient)
+    if config.postgres?.postgresClient?
+      postgresPromise = pingPostgresAsync config.postgres.postgresClient
       .then ->
         body['postgres'] =
           status: 'ok'

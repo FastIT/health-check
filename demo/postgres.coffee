@@ -12,8 +12,7 @@ connectionString = "postgres://#{db.username}:#{db.password}@#{db.host}:#{db.por
 
 config =
   postgres:
-    getPostgresClient: ->
-      new pg.Client connectionString
+    postgresClient: new pg.Client connectionString
 
 app = express()
 healthcheck = require('../main/src/module') config

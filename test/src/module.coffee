@@ -21,8 +21,8 @@ startServerExpress = (callback = ( -> return )) ->
       [mongo.mongoDb]
     elasticsearchClts: ->
       [elasticsearch.elasticClient]
-    postgresDbs: ->
-       [postgres.postgresClient]
+    postgres:
+      postgresClient: postgres.postgresClient
 
   mongo.init ->
     postgres.postgresClient.connect()
@@ -60,40 +60,34 @@ describe 'Express module', ->
             done()
         , 1000
 
-    it 'should detect connection to mongodb', (done) ->
-      agent.get '/api/health-check'
-      .end (err, res) ->
-        expect(res.body.mongo).to.eql {database_1: true}
-        done()
-
-    it 'should detect connection to elasticsearch', (done) ->
-      agent.get '/api/health-check'
-      .end (err, res) ->
-        expect(res.body.elasticsearch).to.eql {database_1: true}
-        done()
+    # it 'should detect connection to mongodb', (done) ->
+    #   agent.get '/api/health-check'
+    #   .end (err, res) ->
+    #     expect(res.body.mongo).to.eql {database_1: true}
+    #     done()
+    #
+    # it 'should detect connection to elasticsearch', (done) ->
+    #   agent.get '/api/health-check'
+    #   .end (err, res) ->
+    #     expect(res.body.elasticsearch).to.eql {database_1: true}
+    #     done()
 
     it 'should detect connection to postgres', (done) ->
       agent.get '/api/health-check'
       .end (err, res) ->
-        expect(res.body.postgres).to.eql {database_1: true}
+        expect(res.body.postgres).to.eql {status: 'ok'}
         done()
 
-    it 'should not dectect any connection to mongodb', (done) ->
-      mongo.mongoDb.close()
-      agent.get '/api/health-check'
-      .end (err, res) ->
-        expect(res.body.mongo).to.eql {database_1: false}
-        done()
+    # it 'should not dectect any connection to mongodb', (done) ->
+    #   mongo.mongoDb.close()
+    #   agent.get '/api/health-check'
+    #   .end (err, res) ->
+    #     expect(res.body.mongo).to.eql {database_1: false}
+    #     done()
 
     it 'should not detect any connection to postgres', (done) ->
       postgres.postgresClient.end()
       agent.get '/api/health-check'
       .end (err, res) ->
-        expect(res.body.postgres).to.eql {database_1: false}
-        done()
-
-    it 'should not detect any connection to postgres', (done) ->
-      agent.get '/api/health-check'
-      .end (err, res) ->
-        expect(res.body.postgres).to.eql {database_1: false}
+        expect(res.body.postgres).to.eql {status: 'ko'}
         done()
