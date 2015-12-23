@@ -59,3 +59,36 @@ app.use healthcheck
 
 app.server = app.listen 3000
 ```
+
+## Mongo
+
+Example with mongo-db:
+
+```coffeescript
+express = require 'express'
+mongodb = require 'mongodb'
+
+db =
+  name: 'dbname'
+  host: 'localhost'
+  port: '5432'
+  username: 'user'
+  password: 'pwd'
+connectionString = "mongodb://#{db.username}:#{db.password}@#{db.host}:#{db.port}/#{db.name}"
+
+MongoClient = mongodb.MongoClient
+mongoClient = new MongoClient()
+
+app = express()
+
+mongo.mongoClient.connect url, (err, db) ->
+  return if err?
+  config =
+    mongo:
+      mongoClient: db
+  healthcheck = require('../main/src/module') config
+  app.use healthcheck
+
+  app.server = app.listen 3000
+
+```

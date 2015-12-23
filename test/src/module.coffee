@@ -16,17 +16,17 @@ url  = 'http://localhost:' + port
 startServerExpress = (callback = ( -> return )) ->
   app = express()
 
-  app.use module
-    mongo:
-      mongoClient: mongo.mongoDb
-    elasticsearchClts: ->
-      [elasticsearch.elasticClient]
-    postgres:
-      postgresClient: postgres.postgresClient
-
   mongo.init ->
     postgres.postgresClient.connect()
     serverExpress = app.listen port, callback
+
+    app.use module
+      mongo:
+        mongoClient: mongo.mongoDb
+      elasticsearchClts: ->
+        [elasticsearch.elasticClient]
+      postgres:
+        postgresClient: postgres.postgresClient
 
 stopServerExpress = (callback = ( -> return )) ->
   serverExpress.close callback
@@ -65,18 +65,6 @@ describe 'Express module', ->
       .end (err, res) ->
         expect(res.body.mongo).to.eql {status: 'ok'}
         done()
-    #
-    # it 'should detect connection to elasticsearch', (done) ->
-    #   agent.get '/api/health-check'
-    #   .end (err, res) ->
-    #     expect(res.body.elasticsearch).to.eql {database_1: true}
-    #     done()
-
-    it 'should detect connection to postgres', (done) ->
-      agent.get '/api/health-check'
-      .end (err, res) ->
-        expect(res.body.postgres).to.eql {status: 'ok'}
-        done()
 
     it 'should not dectect any connection to mongodb', (done) ->
       mongo.mongoDb.close()
@@ -85,9 +73,21 @@ describe 'Express module', ->
         expect(res.body.mongo).to.eql {status: 'ko'}
         done()
 
+    it 'should detect connection to postgres', (done) ->
+      agent.get '/api/health-check'
+      .end (err, res) ->
+        expect(res.body.postgres).to.eql {status: 'ok'}
+        done()
+
     it 'should not detect any connection to postgres', (done) ->
       postgres.postgresClient.end()
       agent.get '/api/health-check'
       .end (err, res) ->
         expect(res.body.postgres).to.eql {status: 'ko'}
         done()
+    #
+    # it 'should detect connection to elasticsearch', (done) ->
+    #   agent.get '/api/health-check'
+    #   .end (err, res) ->
+    #     expect(res.body.elasticsearch).to.eql {database_1: true}
+    #     done()

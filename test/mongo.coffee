@@ -14,7 +14,7 @@ mongo.init = ( next = -> return null ) ->
     if err
       console.log err
     else
-      mongo.mongoDb =  db
+      mongo.mongoDb = db
     next()
 
 module.exports = mongo

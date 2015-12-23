@@ -59,22 +59,18 @@ module.exports = (params = {}) ->
     if config.postgres?.postgresClient?
       postgresPromise = pingPostgresAsync config.postgres.postgresClient
       .then ->
-        body['postgres'] =
-          status: 'ok'
+        status: 'ok'
       .catch (err) ->
-        body['postgres'] =
-          status: 'ko'
+        status: 'ko'
 
     # Check mongo
     mongoPromise = null
     if config.mongo?.mongoClient?
       mongoPromise = pingMongoAsync config.mongo.mongoClient
       .then ->
-        body['mongo'] =
-          status: 'ok'
+        status: 'ok'
       .catch (err) ->
-        body['mongo'] =
-          status: 'ko'
+        status: 'ko'
 
 
     # promises.push 'elasticsearch'
@@ -85,6 +81,8 @@ module.exports = (params = {}) ->
     #   for elasticsearchClt in elasticsearchClts
     #     promises.push pingElasticsearchAsync(elasticsearchClt)
     #
-    Promise.all([mongoPromise, postgresPromise]).then ->
+    Promise.all([mongoPromise, postgresPromise]).then ([mongo, postgres]) ->
+      body['mongo'] = mongo
+      body['postgres'] = postgres
       res.send body
   return app
