@@ -1,13 +1,13 @@
 express = require 'express'
 Promise = require 'bluebird'
 prettyHrtime = require 'pretty-hrtime'
+_ = require 'lodash'
 
 module.exports = (params = {}) ->
-  config =
-    urn:                    if params.urn                 then params.urn                 else '/api/health-check'
-    mongoDbs:               if params.mongoDbs?           then params.mongoDbs            else null
-    postgresDbs:            if params.postgresDbs?        then params.postgresDbs         else null
-    elasticsearchClts:      if params.elasticsearchClts?  then params.elasticsearchClts   else null
+  defaultConfig =
+    urn: '/api/health-check'
+    getMongoConnections: null
+  config = _.defaults params, defaultConfig
 
   app = express()
   start = process.hrtime()
@@ -16,15 +16,11 @@ module.exports = (params = {}) ->
     prettyHrtime process.hrtime start
 
   pingMongoAsync = (mongoConnectionDb) ->
-    new Promise((fulfill,reject)->
-      callback = (err,result) ->
-        if err
-          return reject err
-        else
-          return fulfill result
-
-      mongoConnectionDb.collection('dummy').findOne { _id: 1 }, callback
-      ).timeout(1000)
+    new Promise (fulfill,reject)->
+      mongoConnectionDb.collection('dummy').findOne { _id: 1 }, (err,result) ->
+        return reject err if err?
+        fulfill result
+    .timeout(1000)
 
   timeQueryAsync = (postgresClient) ->
     new Promise((fulfill,reject)->
@@ -52,8 +48,8 @@ module.exports = (params = {}) ->
     )
 
   app.get config.urn, (req, res, next) ->
-    answer = {}
-    answer['uptime'] = uptime()
+    body = {}
+    body['uptime'] = uptime()
     promises = []
 
     #Check postgresDbs connections
@@ -62,50 +58,47 @@ module.exports = (params = {}) ->
       for postgresDb in postgresDbs
         promises.push timeQueryAsync(postgresDb)
 
-    promises.push 'mongo'
+    checkMongo = (driver, dbConfig) ->
 
-    #Check mongoDb connections
-    if config.mongoDbs
-      mongoDbs = config.mongoDbs()
-      for mongoDb in mongoDbs
-        promises.push pingMongoAsync(mongoDb)
+      new Promise (fulfill,reject)->
+        Db = driver.Db
+        MongoClient = driver.MongoClient
+        Server = driver.Server
 
-    promises.push 'elasticsearch'
+        db = new Db dbConfig.name, new Server(dbConfig.address, dbConfig.port)
+        # Establish connection to db
+        db.open (err, db) ->
+          return reject err if err?
+          # Use the admin database for the operation
+          adminDb = db.admin()
 
-    #Check elasticsearch connections
-    if config.elasticsearchClts
-      elasticsearchClts = config.elasticsearchClts()
-      for elasticsearchClt in elasticsearchClts
-        promises.push pingElasticsearchAsync(elasticsearchClt)
+          # Retrive the server Info
+          adminDb.serverStatus (err, info) ->
+            db.close()
+            return reject err if err?
+            return fulfill info
 
-    if promises.length > 2
-      Promise.settle(promises).then (results) ->
-        mongo = {}
-        postgres = {}
-        elastic = {}
-        databases = postgres
-        i = 0
-        j = 1
+    # Check mongo
+    if config.mongo?.driver? and config.mongo?.config?
+      mongoPromise = checkMongo config.mongo.driver, config.mongo.config
 
-        for result in results
-          if promises[i] == 'mongo'
-            databases = mongo
-            j = 1
-          else if promises[i] == 'elasticsearch'
-            databases = elastic
-            j = 1
-          else
-            if result.isFulfilled()
-              databases['database_' + j] = true
-            else
-              databases['database_' + j] = false
-            j++
-          i++
 
-        answer['postgres']        = postgres
-        answer['mongo']           = mongo
-        answer['elasticsearch']   = elastic
-        res.send(answer)
-    else
-      res.send(answer)
+    # promises.push 'elasticsearch'
+    #
+    # #Check elasticsearch connections
+    # if config.elasticsearchClts
+    #   elasticsearchClts = config.elasticsearchClts()
+    #   for elasticsearchClt in elasticsearchClts
+    #     promises.push pingElasticsearchAsync(elasticsearchClt)
+    #
+    mongoPromise.then (info) ->
+      body['mongo'] =
+        status: if info.ok is 1 then 'ok' else 'ko'
+        uptime: info.uptime
+        connections: info.connections
+    .catch (err) ->
+      body['mongo'] =
+        status: 'ko'
+    .finally ->
+      res.send body
   return app
