@@ -65,36 +65,16 @@ module.exports = (params = {}) ->
         body['postgres'] =
           status: 'ko'
 
-    # checkMongo = (driver, dbConfig) ->
-    #
-    #   new Promise (fulfill,reject)->
-    #     # Db = driver.Db
-    #     # Server = driver.Server
-    #     #
-    #     # db = new Db dbConfig.name, new Server(dbConfig.host, dbConfig.port)
-    #     # Establish connection to db
-    #     console.log config.mongo.connection
-    #     config.mongo.connection.stats (err, db) ->
-    #       console.log err
-    #       console.log info
-    #       # return reject err if err?
-    #       # # Retrive the server Info
-    #       # db.stats (err, info) ->
-    #       #   console.log err
-    #       #   console.log info
-    #       #   # db.close()
-    #       return reject err if err?
-    #       return fulfill db
-    #
-    # # Check mongo
-    # if config.mongo?.driver? and config.mongo?.config?
-    #   mongoPromise = checkMongo(config.mongo.driver, config.mongo.config)
-    #   .then (info) ->
-    #     body['mongo'] =
-    #       status: if info.ok is 1 then 'ok' else 'ko'
-    #   .catch (err) ->
-    #     body['mongo'] =
-    #       status: 'ko'
+    # Check mongo
+    mongoPromise = null
+    if config.mongo?.mongoClient?
+      mongoPromise = pingMongoAsync config.mongo.mongoClient
+      .then ->
+        body['mongo'] =
+          status: 'ok'
+      .catch (err) ->
+        body['mongo'] =
+          status: 'ko'
 
 
     # promises.push 'elasticsearch'
@@ -105,6 +85,6 @@ module.exports = (params = {}) ->
     #   for elasticsearchClt in elasticsearchClts
     #     promises.push pingElasticsearchAsync(elasticsearchClt)
     #
-    Promise.all([postgresPromise]).then ->
+    Promise.all([mongoPromise, postgresPromise]).then ->
       res.send body
   return app

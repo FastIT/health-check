@@ -1,11 +1,11 @@
-expect     = require('chai').expect
-express    = require 'express'
-request    = require 'supertest'
+expect = require('chai').expect
+express = require 'express'
+request = require 'supertest'
 
-module        = require('../../main/src/module')
-mongo         = require('../mongo')
+module = require('../../main/src/module')
+mongo = require('../mongo')
 elasticsearch = require('../elasticsearch')
-postgres      = require('../postgres')
+postgres = require('../postgres')
 
 app = null
 serverExpress = null
@@ -17,8 +17,8 @@ startServerExpress = (callback = ( -> return )) ->
   app = express()
 
   app.use module
-    mongoDbs: ->
-      [mongo.mongoDb]
+    mongo:
+      mongoClient: mongo.mongoDb
     elasticsearchClts: ->
       [elasticsearch.elasticClient]
     postgres:
@@ -60,11 +60,11 @@ describe 'Express module', ->
             done()
         , 1000
 
-    # it 'should detect connection to mongodb', (done) ->
-    #   agent.get '/api/health-check'
-    #   .end (err, res) ->
-    #     expect(res.body.mongo).to.eql {database_1: true}
-    #     done()
+    it 'should detect connection to mongodb', (done) ->
+      agent.get '/api/health-check'
+      .end (err, res) ->
+        expect(res.body.mongo).to.eql {status: 'ok'}
+        done()
     #
     # it 'should detect connection to elasticsearch', (done) ->
     #   agent.get '/api/health-check'
@@ -78,12 +78,12 @@ describe 'Express module', ->
         expect(res.body.postgres).to.eql {status: 'ok'}
         done()
 
-    # it 'should not dectect any connection to mongodb', (done) ->
-    #   mongo.mongoDb.close()
-    #   agent.get '/api/health-check'
-    #   .end (err, res) ->
-    #     expect(res.body.mongo).to.eql {database_1: false}
-    #     done()
+    it 'should not dectect any connection to mongodb', (done) ->
+      mongo.mongoDb.close()
+      agent.get '/api/health-check'
+      .end (err, res) ->
+        expect(res.body.mongo).to.eql {status: 'ko'}
+        done()
 
     it 'should not detect any connection to postgres', (done) ->
       postgres.postgresClient.end()

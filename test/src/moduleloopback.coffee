@@ -50,8 +50,8 @@ describe 'loopback module', ->
 
     setTimeout ->
       app.use module
-        mongoDbs: ->
-          [mongo.connector.db]
+        mongo:
+          mongoClient: mongo.connector.db
         postgres:
           postgresClient: postgres.connector.client
         elasticsearchClts: ->
@@ -67,11 +67,11 @@ describe 'loopback module', ->
         expect(res.statusCode).to.eql 200
         done()
 
-    # it 'should detect a connection to mongodb', (done) ->
-    #   agent.get '/api/health-check'
-    #   .end (err, res) ->
-    #     expect(res.body.mongo).to.eql {database_1: true}
-    #     done()
+    it 'should detect a connection to mongodb', (done) ->
+      agent.get '/api/health-check'
+      .end (err, res) ->
+        expect(res.body.mongo).to.eql {status: 'ok'}
+        done()
 
     it 'should detect a connection to postgres', (done) ->
       agent.get '/api/health-check'
