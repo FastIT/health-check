@@ -22,11 +22,11 @@ startServerExpress = (callback = ( -> return )) ->
 
     app.use module
       mongo:
-        mongoClient: mongo.mongoDb
+        client: mongo.mongoDb
       elasticsearch:
-        elasticsearchClient: elasticsearch.elasticClient
+        client: elasticsearch.elasticClient
       postgres:
-        postgresClient: postgres.postgresClient
+        client: postgres.postgresClient
 
 stopServerExpress = (callback = ( -> return )) ->
   serverExpress.close callback

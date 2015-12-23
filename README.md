@@ -57,7 +57,7 @@ connectionString = "postgres://#{db.username}:#{db.password}@#{db.host}:#{db.por
 
 config =
   postgres:
-    postgresClient: new pg.Client connectionString
+    client: new pg.Client connectionString
 
 app = express()
 healthcheck = require('../main/src/module') config
@@ -91,7 +91,7 @@ mongo.mongoClient.connect url, (err, db) ->
   return if err?
   config =
     mongo:
-      mongoClient: db
+      client: db
   healthcheck = require('../main/src/module') config
   app.use healthcheck
 

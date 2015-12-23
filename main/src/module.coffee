@@ -25,7 +25,7 @@ module.exports = (params = {}) ->
       mongoConnectionDb.collection('dummy').findOne { _id: 1 }, callback
       ).timeout(1000)
 
-  pingPostgresAsync = (postgresClient) ->
+  pingPostgresAsync = (client) ->
     new Promise((fulfill,reject)->
       callback = (err,result) ->
         if err
@@ -33,7 +33,7 @@ module.exports = (params = {}) ->
         else
           return fulfill result
 
-      postgresClient.query 'SELECT NOW() AS "theTime"', callback
+      client.query 'SELECT NOW() AS "theTime"', callback
       ).timeout(1000)
 
   pingElasticsearchAsync = (elasticsearchClt) ->
@@ -56,8 +56,8 @@ module.exports = (params = {}) ->
 
     # Check postgres
     postgresPromise = null
-    if config.postgres?.postgresClient?
-      postgresPromise = pingPostgresAsync config.postgres.postgresClient
+    if config.postgres?.client?
+      postgresPromise = pingPostgresAsync config.postgres.client
       .then ->
         status: 'ok'
       .catch (err) ->
@@ -65,8 +65,8 @@ module.exports = (params = {}) ->
 
     # Check mongo
     mongoPromise = null
-    if config.mongo?.mongoClient?
-      mongoPromise = pingMongoAsync config.mongo.mongoClient
+    if config.mongo?.client?
+      mongoPromise = pingMongoAsync config.mongo.client
       .then ->
         status: 'ok'
       .catch (err) ->
@@ -74,8 +74,8 @@ module.exports = (params = {}) ->
 
     # Check elasticsearch
     elasticsearchPromise = null
-    if config.elasticsearch?.elasticsearchClient?
-      elasticsearchPromise = pingElasticsearchAsync config.elasticsearch.elasticsearchClient
+    if config.elasticsearch?.client?
+      elasticsearchPromise = pingElasticsearchAsync config.elasticsearch.client
       .then ->
         status: 'ok'
       .catch (err) ->
