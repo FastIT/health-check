@@ -26,6 +26,9 @@ curl http://localhost/api/health-check
   "uptime": 42 // in seconds
   "postgres": {
     "status": "ok", // or ko
+  },
+  "mongo": {
+    "status": "ok", // or ko
   }
 }
 ```
