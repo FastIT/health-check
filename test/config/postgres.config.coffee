@@ -1,7 +1,7 @@
 config =
   db:
     name: 'base_test'
-    address: 'localhost'
+    host: 'localhost'
     port: ''
     username: 'pacman'
     password: ''
