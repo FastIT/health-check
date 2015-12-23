@@ -54,7 +54,7 @@ module.exports = (params = {}) ->
     body = {}
     body['uptime'] = uptime()
 
-    #Check postgres connection
+    # Check postgres
     postgresPromise = null
     if config.postgres?.postgresClient?
       postgresPromise = pingPostgresAsync config.postgres.postgresClient
@@ -72,17 +72,22 @@ module.exports = (params = {}) ->
       .catch (err) ->
         status: 'ko'
 
+    # Check elasticsearch
+    elasticsearchPromise = null
+    if config.elasticsearch?.elasticsearchClient?
+      elasticsearchPromise = pingElasticsearchAsync config.elasticsearch.elasticsearchClient
+      .then ->
+        status: 'ok'
+      .catch (err) ->
+        status: 'ko'
 
-    # promises.push 'elasticsearch'
-    #
-    # #Check elasticsearch connections
-    # if config.elasticsearchClts
-    #   elasticsearchClts = config.elasticsearchClts()
-    #   for elasticsearchClt in elasticsearchClts
-    #     promises.push pingElasticsearchAsync(elasticsearchClt)
-    #
-    Promise.all([mongoPromise, postgresPromise]).then ([mongo, postgres]) ->
+    Promise.all([
+      mongoPromise
+      postgresPromise
+      elasticsearchPromise
+    ]).then ([mongo, postgres, elasticsearch]) ->
       body['mongo'] = mongo
       body['postgres'] = postgres
+      body['elasticsearch'] = elasticsearch
       res.send body
   return app

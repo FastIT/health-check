@@ -1,5 +1,5 @@
-elasticsearch     = require 'elasticsearch'
-config            = require "./config/elasticsearch.config"
+elasticsearch = require 'elasticsearch'
+config = require "./config/elasticsearch.config"
 
 elasticsearch =
   elasticClient: new (elasticsearch.Client)(

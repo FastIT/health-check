@@ -79,8 +79,8 @@ describe 'loopback module', ->
         expect(res.body.postgres).to.eql {status: 'ok'}
         done()
 
-    # it 'should detect a connection to elasticsearch', (done) ->
-    #   agent.get '/api/health-check'
-    #   .end (err, res) ->
-    #     expect(res.body.elasticsearch).to.eql {database_1: true}
-    #     done()
+    it 'should detect a connection to elasticsearch', (done) ->
+      agent.get '/api/health-check'
+      .end (err, res) ->
+        expect(res.body.elasticsearch).to.eql {status: 'ok'}
+        done()

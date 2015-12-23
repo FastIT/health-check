@@ -29,6 +29,9 @@ curl http://localhost/api/health-check
   },
   "mongo": {
     "status": "ok", // or ko
+  },
+  "elasticsearch": {
+    "status": "ok", // or ko
   }
 }
 ```

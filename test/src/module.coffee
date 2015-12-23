@@ -23,8 +23,8 @@ startServerExpress = (callback = ( -> return )) ->
     app.use module
       mongo:
         mongoClient: mongo.mongoDb
-      elasticsearchClts: ->
-        [elasticsearch.elasticClient]
+      elasticsearch:
+        elasticsearchClient: elasticsearch.elasticClient
       postgres:
         postgresClient: postgres.postgresClient
 
@@ -85,9 +85,9 @@ describe 'Express module', ->
       .end (err, res) ->
         expect(res.body.postgres).to.eql {status: 'ko'}
         done()
-    #
-    # it 'should detect connection to elasticsearch', (done) ->
-    #   agent.get '/api/health-check'
-    #   .end (err, res) ->
-    #     expect(res.body.elasticsearch).to.eql {database_1: true}
-    #     done()
+
+    it 'should detect connection to elasticsearch', (done) ->
+      agent.get '/api/health-check'
+      .end (err, res) ->
+        expect(res.body.elasticsearch).to.eql {status: 'ok'}
+        done()
