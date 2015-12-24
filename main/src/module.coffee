@@ -81,13 +81,37 @@ module.exports = (params = {}) ->
       .catch (err) ->
         status: 'ko'
 
+    # Custom checks
+    customPromise = null
+    if _.isPlainObject config.custom
+      checkPromises = []
+      for key, check of config.custom
+        checkPromises.push new Promise (resolve, reject) ->
+          check (err, result) ->
+            if err?
+              if _.isFunction config.logger?.error
+                config.logger.error err
+              else
+                console.error err
+            resolve
+              key: key
+              result: result
+      customPromise = Promise.all checkPromises
+
     Promise.all([
       mongoPromise
       postgresPromise
       elasticsearchPromise
-    ]).then ([mongo, postgres, elasticsearch]) ->
-      body['mongo'] = mongo
-      body['postgres'] = postgres
-      body['elasticsearch'] = elasticsearch
+      customPromise
+    ]).then ([mongo, postgres, elasticsearch, custom]) ->
+      if mongo?
+        body['mongo'] = mongo
+      if postgres?
+        body['postgres'] = postgres
+      if elasticsearch?
+        body['elasticsearch'] = elasticsearch
+      if _.isArray custom
+        for result in custom
+          body[result.key] = result.result
       res.send body
   return app

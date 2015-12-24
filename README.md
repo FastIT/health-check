@@ -124,3 +124,45 @@ app.use healthcheck
 app.server = app.listen 3000
 
 ```
+
+# Custom healthchecks
+
+You can add your own healthchecks like this:
+
+```coffeescript
+
+express = require 'express'
+
+config =
+  custom:
+    hello: (done) ->
+      done null, 'hello is OK!'
+    dataConsistency: (done) ->
+      done null, {
+        status: 'ok'
+        somethingElse: 123
+      }
+    error: (done) ->
+      done 'Unexpected error' # this error will be logged
+  logger: console # you can specify here a logger with an "error" method to log errors
+
+app = express()
+healthcheck = require('../main/src/module') config
+app.use healthcheck
+
+app.server = app.listen 3000
+
+```
+
+Then the response looks like this:
+
+```javascript
+{
+  uptime: "2.31 s",
+  hello: "hello is OK!",
+  dataConsistency: {
+    status: 'ok',
+    somethingElse: 123,
+  }
+}
+```

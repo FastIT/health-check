@@ -27,6 +27,9 @@ startServerExpress = (callback = ( -> return )) ->
         client: elasticsearch.elasticClient
       postgres:
         client: postgres.postgresClient
+      custom:
+        hello: (done) ->
+          done null, 'hello response'
 
 stopServerExpress = (callback = ( -> return )) ->
   serverExpress.close callback
@@ -90,4 +93,10 @@ describe 'Express module', ->
       agent.get '/api/health-check'
       .end (err, res) ->
         expect(res.body.elasticsearch).to.eql {status: 'ok'}
+        done()
+
+    it 'should display custom checks', (done) ->
+      agent.get '/api/health-check'
+      .end (err, res) ->
+        expect(res.body.hello).to.eql 'hello response'
         done()
