@@ -8,6 +8,9 @@ node_js:
 services:
   - mongodb
   - elasticsearch
+  
+notifications:
+  email: false
 
 addons:
   postgresql: "9.3"

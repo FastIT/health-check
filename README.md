@@ -154,7 +154,7 @@ app.server = app.listen 3000
 
 ```
 
-Then the response look like this:
+Then the response looks like this:
 
 ```javascript
 {

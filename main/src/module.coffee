@@ -104,10 +104,14 @@ module.exports = (params = {}) ->
       elasticsearchPromise
       customPromise
     ]).then ([mongo, postgres, elasticsearch, custom]) ->
-      body['mongo'] = mongo
-      body['postgres'] = postgres
-      body['elasticsearch'] = elasticsearch
-      for result in custom
-        body[result.key] = result.result
+      if mongo?
+        body['mongo'] = mongo
+      if postgres?
+        body['postgres'] = postgres
+      if elasticsearch?
+        body['elasticsearch'] = elasticsearch
+      if _.isArray custom
+        for result in custom
+          body[result.key] = result.result
       res.send body
   return app
