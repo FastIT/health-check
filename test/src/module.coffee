@@ -92,7 +92,7 @@ describe 'Express module', ->
     it 'should detect connection to elasticsearch', (done) ->
       agent.get '/api/health-check'
       .end (err, res) ->
-        expect(res.body.elasticsearch).to.eql {status: 'ok'}
+        expect(res.body.elasticsearch.status).to.eql 'ok'
         done()
 
     it 'should display custom checks', (done) ->
