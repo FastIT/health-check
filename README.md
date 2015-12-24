@@ -144,7 +144,7 @@ config =
       }
     error: (done) ->
       done 'Unexpected error' # this error will be logged
-  logger: console # you can specify here a logger with and "error" method to log errors
+  logger: console # you can specify here a logger with an "error" method to log errors
 
 app = express()
 healthcheck = require('../main/src/module') config
