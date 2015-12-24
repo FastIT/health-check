@@ -37,18 +37,20 @@ module.exports = (params = {}) ->
       ).timeout(1000)
 
   pingElasticsearchAsync = (elasticsearchClt) ->
-    new Promise((fulfill,reject) ->
-      callback = (err,result) ->
-        if err
-          return reject err
-        else
-          return fulfill result
-
+    response = {}
+    new Promise (fulfill,reject) ->
       elasticsearchClt.ping {
         requestTimeout: 3000
         hello: 'elasticsearch!'
-        }, callback
-    )
+        }, (err, isOK) ->
+          if isOK
+            response.status = 'ok'
+            elasticsearchClt.cluster.health {}, (err, clusterHealth) ->
+              response.cluster = clusterHealth
+              fulfill response
+          else
+            response.status = 'ko'
+            fulfill response
 
   app.get config.urn, (req, res, next) ->
     body = {}
@@ -76,10 +78,6 @@ module.exports = (params = {}) ->
     elasticsearchPromise = null
     if config.elasticsearch?.client?
       elasticsearchPromise = pingElasticsearchAsync config.elasticsearch.client
-      .then ->
-        status: 'ok'
-      .catch (err) ->
-        status: 'ko'
 
     # Custom checks
     customPromise = null
