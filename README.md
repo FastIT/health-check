@@ -5,6 +5,10 @@
 
 An health check module for express and loopback
 
+# Install
+
+npm install --save healthcheck-fastit
+
 # Usage
 
 In your app, add the following code:
