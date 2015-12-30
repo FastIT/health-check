@@ -14,6 +14,12 @@ module.exports = (params = {}) ->
   uptime = ->
     prettyHrtime process.hrtime start
 
+  globalStatus = (statuses) ->
+    for status in statuses
+      if status is 'ko'
+        return 'ko'
+    'ok'
+
   pingMongoAsync = (mongoConnectionDb) ->
     new Promise((fulfill,reject)->
       callback = (err,result) ->
@@ -102,14 +108,19 @@ module.exports = (params = {}) ->
       elasticsearchPromise
       customPromise
     ]).then ([mongo, postgres, elasticsearch, custom]) ->
+      statuses = []
       if mongo?
         body['mongo'] = mongo
+        statuses.push mongo.status
       if postgres?
         body['postgres'] = postgres
+        statuses.push postgres.status
       if elasticsearch?
         body['elasticsearch'] = elasticsearch
+        statuses.push elasticsearch.status
       if _.isArray custom
         for result in custom
           body[result.key] = result.result
+      body.status = globalStatus statuses
       res.send body
   return app
