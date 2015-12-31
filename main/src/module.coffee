@@ -1,7 +1,8 @@
-express = require 'express'
-Promise = require 'bluebird'
+express      = require 'express'
+Promise      = require 'bluebird'
 prettyHrtime = require 'pretty-hrtime'
-_ = require 'lodash'
+_            = require 'lodash'
+os           = require 'os'
 
 module.exports = (params = {}) ->
   defaultParams =
@@ -13,6 +14,30 @@ module.exports = (params = {}) ->
 
   uptime = ->
     prettyHrtime process.hrtime start
+
+  processInfos = ()->
+    processInfosList = [
+      pid         : process.pid,
+      arch        : process.arch,
+      platform    : process.platform,
+      memoryUsage : process.memoryUsage(),
+      uptime      : process.uptime(),
+      execPath    : process.execPath,
+      execArgv    : process.execArgv
+    ]
+    processInfosList
+
+  osInfos = ()->
+    osInfosList = [
+      platform : os.platform(),
+      arch     : os.arch(),
+      release  : os.release(),
+      uptime   : os.uptime(),
+      loadavg  : os.loadavg(),
+      totalmem : os.totalmem(),
+      freemem  : os.freemem()
+    ]
+    osInfosList
 
   globalStatus = (statuses) ->
     for status in statuses
@@ -121,6 +146,8 @@ module.exports = (params = {}) ->
       if _.isArray custom
         for result in custom
           body[result.key] = result.result
-      body.status = globalStatus statuses
+      body.status       = globalStatus statuses
+      body.processInfos = processInfos()
+      body.osInfos      = osInfos()
       res.send body
   return app
