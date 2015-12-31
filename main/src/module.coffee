@@ -16,7 +16,7 @@ module.exports = (params = {}) ->
     prettyHrtime process.hrtime start
 
   processInfos = ->
-    processInfosList = [
+    [
       pid         : process.pid,
       arch        : process.arch,
       platform    : process.platform,
@@ -25,10 +25,9 @@ module.exports = (params = {}) ->
       execPath    : process.execPath,
       execArgv    : process.execArgv
     ]
-    processInfosList
 
   osInfos = ->
-    osInfosList = [
+    [
       platform : os.platform(),
       arch     : os.arch(),
       release  : os.release(),
@@ -37,7 +36,6 @@ module.exports = (params = {}) ->
       totalmem : os.totalmem(),
       freemem  : os.freemem()
     ]
-    osInfosList
 
   globalStatus = (statuses) ->
     for status in statuses
