@@ -15,7 +15,7 @@ module.exports = (params = {}) ->
   uptime = ->
     prettyHrtime process.hrtime start
 
-  processInfos = ()->
+  processInfos = ->
     processInfosList = [
       pid         : process.pid,
       arch        : process.arch,
@@ -27,7 +27,7 @@ module.exports = (params = {}) ->
     ]
     processInfosList
 
-  osInfos = ()->
+  osInfos = ->
     osInfosList = [
       platform : os.platform(),
       arch     : os.arch(),
