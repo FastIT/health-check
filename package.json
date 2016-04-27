@@ -9,7 +9,7 @@
   "installable": false,
   "license": "MIT",
   "main": "main/src/module.coffee",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "name": "healthcheck-fastit",
   "scripts": {
     "watch": "gulp watch",
