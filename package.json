@@ -3,6 +3,7 @@
     "bluebird": "^2.10.2",
     "coffee-script": "~1.9.3",
     "express": "~4.12.4",
+    "lodash": "3.10.1",
     "mongodb": "^2.0.45",
     "pretty-hrtime": "1.0.1"
   },
