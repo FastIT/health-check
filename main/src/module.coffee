@@ -51,7 +51,7 @@ module.exports = (params = {}) ->
         else
           return fulfill result
 
-      mongoConnectionDb.collection('dummy').findOne { _id: 1 }, callback
+      mongoConnectionDb.collection('system.indexes').findOne {}, callback
       ).timeout(1000)
 
   pingPostgresAsync = (client) ->
