@@ -1,44 +1,23 @@
 {
   "dependencies": {
     "bluebird": "^3.4.0",
-    "coffee-script": "~1.10.0",
     "express": "~4.13.4",
     "lodash": "4.13.1",
-    "mongodb": "^2.0.45",
-    "pretty-hrtime": "1.0.2"
+    "pretty-hrtime": "^1.0.2"
   },
-  "installable": false,
   "license": "MIT",
-  "main": "main/src/module.coffee",
-  "version": "0.3.4",
+  "main": "source/index.js",
+  "version": "1.0.0",
   "name": "healthcheck-fastit",
   "scripts": {
-    "watch": "gulp watch",
-    "test": "COFFEECOV_INIT_ALL=false mocha test 'test/src/**/*.coffee'",
+    "test": "istanbul cover _mocha -- 'test/*.js'",
     "posttest": "istanbul report"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
     "codecov.io": "^0.1.6",
-    "coffee-coverage": "^1.0.1",
-    "coveralls": "^2.11.9",
-    "elasticsearch": "^11.0.1",
-    "gulp": "^3.9.1",
-    "gulp-coffee": "^2.3.2",
-    "gulp-mocha": "^2.2.0",
-    "gulp-plumber": "^1.1.0",
+    "expect.js": "^0.3.1",
     "istanbul": "^0.4.3",
     "mocha": "^2.5.3",
-    "mongodb": "^2.1.18",
-    "pg": "^5.0.0",
-    "should": "^9.0.2",
-    "express-session": "~1.13.0",
-    "loopback": "^2.29.0",
-    "loopback-boot": "^2.18.1",
-    "loopback-connector-es": "^1.0.4",
-    "loopback-connector-mongodb": "^1.15.2",
-    "loopback-connector-postgresql": "^2.4.1",
-    "sinon-chai": "^2.8.0",
     "supertest": "^1.2.0"
   }
 }
