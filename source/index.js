@@ -106,7 +106,7 @@ var checkElasticsearch = function(client) {
       requestTimeout: 3000,
       hello: 'elasticsearch!'
     }, function(err, res) {
-      if (err) return reject();
+      if (err) return reject(err);
       return resolve();
     });
   });
