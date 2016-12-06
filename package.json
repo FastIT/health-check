@@ -1,13 +1,13 @@
 {
   "dependencies": {
     "bluebird": "^3.4.0",
-    "express": "~4.13.4",
+    "express": "~4.14.0",
     "lodash": "4.13.1",
     "pretty-hrtime": "^1.0.2"
   },
   "license": "MIT",
   "main": "source/index.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "name": "healthcheck-fastit",
   "scripts": {
     "test": "istanbul cover _mocha -- 'test/*.js'",
