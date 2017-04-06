@@ -116,9 +116,21 @@ module.exports = exports = function(params) {
   var urn = params && params.urn ? params.urn : '/api/health-check';
   var app = express();
   app.get(urn, function(req, res) {
-    Promise.resolve(check(params))
+    check(params)
       .then(function(result) {
         return res.send(result);
+      })
+      .catch(function() {
+        return res.status(500).send('something is broken');
+      });
+  });
+  app.get(urn + '-vip', function(req, res) {
+    check(params)
+      .then(function(result) {
+        return res.sendStatus(result.status === 'ok' ? 200 : 500);
+      })
+      .catch(function() {
+        return res.sendStatus(500);
       });
   });
   return app;
