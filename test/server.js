@@ -16,5 +16,16 @@ describe('server', function() {
       .expect(200, done);
   });
 
+  it('should return 200 when calling health-check-vip', function(done) {
+    request(healthcheck())
+      .get('/api/health-check-vip')
+      .expect(200, done);
+  });
+
+  it('should return 200 when calling health-check-vip with specified urn', function(done) {
+    request(healthcheck({urn: '/coucou'}))
+      .get('/coucou-vip')
+      .expect(200, done);
+  });
 
 });
