@@ -7,7 +7,7 @@
   },
   "license": "MIT",
   "main": "source/index.js",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "name": "healthcheck-fastit",
   "scripts": {
     "test": "istanbul cover _mocha -- 'test/*.js'",
