@@ -114,7 +114,7 @@ var checkElasticsearch = function(client) {
 
 module.exports = exports = function(params) {
   var urn = params && params.urn ? params.urn : '/api/health-check';
-  var app = express();
+  var app = express.Router();
   app.get(urn, function(req, res) {
     check(params)
       .then(function(result) {
