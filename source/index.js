@@ -118,7 +118,7 @@ module.exports = exports = function(params) {
   app.get(urn, function(req, res) {
     check(params)
       .then(function(result) {
-        return res.send(result);
+        return res.status(result.status === 'ok' ? 200 : 500).send(result);
       })
       .catch(function() {
         return res.status(500).send('something is broken');
