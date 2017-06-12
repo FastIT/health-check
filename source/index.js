@@ -118,7 +118,7 @@ module.exports = exports = function(params) {
   app.get(urn, function(req, res) {
     check(params)
       .then(function(result) {
-        return res.status(result.status === 'ok' ? 200 : 500).send(result);
+        return res.status(result.status === 'ok' ? 200 : 503).send(result);
       })
       .catch(function() {
         return res.status(500).send('something is broken');
@@ -127,7 +127,7 @@ module.exports = exports = function(params) {
   app.get(urn + '-vip', function(req, res) {
     check(params)
       .then(function(result) {
-        return res.sendStatus(result.status === 'ok' ? 200 : 500);
+        return res.sendStatus(result.status === 'ok' ? 200 : 503);
       })
       .catch(function() {
         return res.sendStatus(500);
